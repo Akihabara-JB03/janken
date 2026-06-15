@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Janken Monitor</title>
+    <hta:application id="jApp" innerborder="no" scroll="no" windowstate="normal" />
+    <style>
+        body { background: #121212; color: #00ff00; font-family: 'Consolas', monospace; padding: 15px; }
+        .stats { font-size: 18px; color: #ffffff; }
+        .rate { font-size: 40px; color: #ff00ff; font-weight: bold; text-align: center; }
+    </style>
+<script language="javascript">
+    window.resizeTo(400, 250);
+
+    function init() {
+        // 1. Pythonから渡された全体のコマンドライン文字列を取得
+        var cmd = jApp.commandLine;
+        
+        // 2. 【バグ修正】一番最後の半角スペースの後ろ（＝send_data）だけを綺麗に抜き出す！
+        var lastSpace = cmd.lastIndexOf(" ");
+        var data = cmd.substring(lastSpace + 1);
+        
+        // 3. 抜き出したデータにカンマが含まれているか一応チェック
+        if(data && data.indexOf(",") !== -1) {
+            var arr = data.split(",");
+            var kati = arr[0];  // 👑 勝
+            var make = arr[1];  // 💀 負
+            var aiko = arr[2];  // 🤝 分
+
+            var total = Number(kati) + Number(make) + Number(aiko);
+            var rate = total > 0 ? ((Number(kati) / total) * 100).toFixed(1) : 0;
+
+            // 画面の文字を書き換える
+            document.getElementById("text").innerHTML = "👑勝: " + kati + " | 💀負: " + make + " | 🤝分: " + aiko;
+            document.getElementById("win").innerHTML = rate + "%";
+        }
+    }
+</script>
+
+</head>
+<body onload="init()">
+    <div class="stats" id="text">データ待機中...</div>
+    <div class="rate" id="win">0.0%</div>
+</body>
+</html>

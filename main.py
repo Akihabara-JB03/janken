@@ -1,4 +1,6 @@
 import random
+import subprocess 
+import os
 aiko,kati,make,siai_kaisu,syouritu = 0,0,0,0,0
 def janken(user_hand):
     global aiko,make,kati,siai_kaisu,syouritu
@@ -22,5 +24,21 @@ def janken(user_hand):
         print("すごいね～。")
     else:
         print("運が悪いんですね～")
+        send_data = f"{kati},{make},{aiko}"
     
+    # 🌟 【UIが出ないバグを粉砕する絶対パスシステム】
+    # 1. この main.py が置いてあるフォルダの正確な絶対パス（位置）を取得する
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # 2. フォルダのパスと「main.hta」を合体させて、確実なフルパス（住所）を作る
+    hta_path = os.path.join(current_dir, "main.hta")
+    
+    try:
+        # まず、前に開いていた古い mshta を掃除（タスクキル）
+        subprocess.run(["taskkill", "/F", "/IM", "mshta.exe"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        
+        # 3. 割り出した「確実なフルパス（hta_path）」を指定して mshta を起動！
+        subprocess.Popen(["mshta", hta_path, send_data])
+    except:
+        pass # エラスルー（次々！）精神
     print("これでも、130~140KiBを維持しているんですよ。流石C言語！！")
